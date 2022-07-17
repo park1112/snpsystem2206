@@ -53,16 +53,16 @@ const navConfig = [
         ],
       },
 
-      // INVOICE
+      // 출고
       {
         title: '출고',
-        path: PATH_DASHBOARD.invoice.root,
+        path: PATH_DASHBOARD.release.root,
         icon: ICONS.invoice,
         children: [
-          { title: '출고 목록', path: PATH_DASHBOARD.invoice.list },
-          { title: '출고 송장', path: PATH_DASHBOARD.invoice.demoView },
-          { title: '출고 송장등록', path: PATH_DASHBOARD.invoice.new },
-          { title: 'edit', path: PATH_DASHBOARD.invoice.demoEdit },
+          { title: '출고 목록', path: PATH_DASHBOARD.release.list },
+          { title: '출고 송장', path: PATH_DASHBOARD.release.demoView },
+          { title: '출고 송장등록', path: PATH_DASHBOARD.release.new },
+          { title: 'edit', path: PATH_DASHBOARD.release.demoEdit },
         ],
       },
 
@@ -80,55 +80,55 @@ const navConfig = [
       },
 
       // BLOG
-      {
-        title: 'blog',
-        path: PATH_DASHBOARD.blog.root,
-        icon: ICONS.blog,
-        children: [
-          { title: 'posts', path: PATH_DASHBOARD.blog.posts },
-          { title: 'post', path: PATH_DASHBOARD.blog.demoView },
-          { title: 'create', path: PATH_DASHBOARD.blog.new },
-        ],
-      },
-      // E-COMMERCE
-      {
-        title: 'e-commerce',
-        path: PATH_DASHBOARD.eCommerce.root,
-        icon: ICONS.cart,
-        children: [
-          { title: 'shop', path: PATH_DASHBOARD.eCommerce.shop },
-          { title: 'product', path: PATH_DASHBOARD.eCommerce.demoView },
-          { title: 'list', path: PATH_DASHBOARD.eCommerce.list },
-          { title: 'create', path: PATH_DASHBOARD.eCommerce.new },
-          { title: 'edit', path: PATH_DASHBOARD.eCommerce.demoEdit },
-          { title: 'checkout', path: PATH_DASHBOARD.eCommerce.checkout },
-        ],
-      },
+      // {
+      //   title: 'blog',
+      //   path: PATH_DASHBOARD.blog.root,
+      //   icon: ICONS.blog,
+      //   children: [
+      //     { title: 'posts', path: PATH_DASHBOARD.blog.posts },
+      //     { title: 'post', path: PATH_DASHBOARD.blog.demoView },
+      //     { title: 'create', path: PATH_DASHBOARD.blog.new },
+      //   ],
+      // },
+      // // E-COMMERCE
+      // {
+      //   title: 'e-commerce',
+      //   path: PATH_DASHBOARD.eCommerce.root,
+      //   icon: ICONS.cart,
+      //   children: [
+      //     { title: 'shop', path: PATH_DASHBOARD.eCommerce.shop },
+      //     { title: 'product', path: PATH_DASHBOARD.eCommerce.demoView },
+      //     { title: 'list', path: PATH_DASHBOARD.eCommerce.list },
+      //     { title: 'create', path: PATH_DASHBOARD.eCommerce.new },
+      //     { title: 'edit', path: PATH_DASHBOARD.eCommerce.demoEdit },
+      //     { title: 'checkout', path: PATH_DASHBOARD.eCommerce.checkout },
+      //   ],
+      // },
     ],
   },
   // 입고
   // ----------------------------------------------------------------------
-  {
-    subheader: '입고',
-    items: [
-      { title: '입고 내역', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: '제품 입고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: '톤백 제품 입고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: '제품 이고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-    ],
-  },
-  // 출고
-  // ----------------------------------------------------------------------
-  {
-    subheader: '출고',
-    items: [
-      { title: '출고 내역', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: '출고전 생산 등록', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: '생산 제품 출고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: '제고 제품 출고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: '제고 제품 이고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-    ],
-  },
+  // {
+  //   subheader: '입고',
+  //   items: [
+  //     { title: '입고 내역', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: '제품 입고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: '톤백 제품 입고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: '제품 이고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //   ],
+  // },
+  // // 출고
+  // // ----------------------------------------------------------------------
+  // {
+  //   subheader: '출고',
+  //   items: [
+  //     { title: '출고 내역', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: '출고전 생산 등록', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: '생산 제품 출고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: '제고 제품 출고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: '제고 제품 이고', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //   ],
+  // },
   // 통계
   // ----------------------------------------------------------------------
   {
@@ -153,17 +153,17 @@ const navConfig = [
 
   // GENERAL
   // ----------------------------------------------------------------------
-  {
-    subheader: 'general',
-    items: [
-      { title: 'Main', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
-      { title: 'app', path: PATH_DASHBOARD.general.app, icon: ICONS.dashboard },
-      { title: 'e-commerce', path: PATH_DASHBOARD.general.ecommerce, icon: ICONS.ecommerce },
-      { title: 'analytics', path: PATH_DASHBOARD.general.analytics, icon: ICONS.analytics },
-      { title: 'banking', path: PATH_DASHBOARD.general.banking, icon: ICONS.banking },
-      { title: 'booking', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking },
-    ],
-  },
+  // {
+  //   subheader: 'general',
+  //   items: [
+  //     { title: 'Main', path: PATH_DASHBOARD.general.main, icon: ICONS.dashboard },
+  //     { title: 'app', path: PATH_DASHBOARD.general.app, icon: ICONS.dashboard },
+  //     { title: 'e-commerce', path: PATH_DASHBOARD.general.ecommerce, icon: ICONS.ecommerce },
+  //     { title: 'analytics', path: PATH_DASHBOARD.general.analytics, icon: ICONS.analytics },
+  //     { title: 'banking', path: PATH_DASHBOARD.general.banking, icon: ICONS.banking },
+  //     { title: 'booking', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking },
+  //   ],
+  // },
 
   // MANAGEMENT
   // ----------------------------------------------------------------------
@@ -229,24 +229,24 @@ const navConfig = [
 
   // APP
   // ----------------------------------------------------------------------
-  {
-    subheader: 'app',
-    items: [
-      {
-        title: 'mail',
-        path: PATH_DASHBOARD.mail.root,
-        icon: ICONS.mail,
-        info: (
-          <Label variant="outlined" color="error">
-            +32
-          </Label>
-        ),
-      },
-      { title: 'chat', path: PATH_DASHBOARD.chat.root, icon: ICONS.chat },
-      { title: 'calendar', path: PATH_DASHBOARD.calendar, icon: ICONS.calendar },
-      { title: 'kanban', path: PATH_DASHBOARD.kanban, icon: ICONS.kanban },
-    ],
-  },
+  // {
+  //   subheader: 'app',
+  //   items: [
+  //     {
+  //       title: 'mail',
+  //       path: PATH_DASHBOARD.mail.root,
+  //       icon: ICONS.mail,
+  //       info: (
+  //         <Label variant="outlined" color="error">
+  //           +32
+  //         </Label>
+  //       ),
+  //     },
+  //     { title: 'chat', path: PATH_DASHBOARD.chat.root, icon: ICONS.chat },
+  //     { title: 'calendar', path: PATH_DASHBOARD.calendar, icon: ICONS.calendar },
+  //     { title: 'kanban', path: PATH_DASHBOARD.kanban, icon: ICONS.kanban },
+  //   ],
+  // },
 ];
 
 export default navConfig;
