@@ -1,0 +1,21 @@
+{
+  "name": "SNP SYSTEM",
+  "short_name": "SNP SYSTEM",
+  "display": "standalone",
+  "start_url": "/",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "logo/360x360white.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo/360x360white.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
