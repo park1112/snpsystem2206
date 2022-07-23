@@ -1,0 +1,68 @@
+import merge from 'lodash/merge';
+// @mui
+import { Card, CardHeader, Box } from '@mui/material';
+// components
+import ReactApexChart, { BaseOptionChart } from '../../../../components/chart';
+
+// ----------------------------------------------------------------------
+
+const CHART_DATA = [
+  {
+    name: '유통시장 판매량',
+    type: 'column',
+    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+  },
+  {
+    name: '인터넷 판매량',
+    type: 'area',
+    data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+  },
+  {
+    name: '개인상회 판매량',
+    type: 'line',
+    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+  },
+];
+
+export default function AnalyticsWebsiteVisits() {
+  const chartOptions = merge(BaseOptionChart(), {
+    stroke: { width: [0, 2, 3] },
+    plotOptions: { bar: { columnWidth: '14%' } },
+    fill: { type: ['solid', 'gradient', 'solid'] },
+    labels: [
+      '01/01/2003',
+      '02/01/2003',
+      '03/01/2003',
+      '04/01/2003',
+      '05/01/2003',
+      '06/01/2003',
+      '07/01/2003',
+      '08/01/2003',
+      '09/01/2003',
+      '10/01/2003',
+      '11/01/2003',
+    ],
+    xaxis: { type: 'datetime' },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      y: {
+        formatter: (y) => {
+          if (typeof y !== 'undefined') {
+            return `${y.toFixed(0)} visits`;
+          }
+          return y;
+        },
+      },
+    },
+  });
+
+  return (
+    <Card>
+      <CardHeader title="일자별 판매현황" subheader="(+13%) 판매량 상승" />
+      <Box sx={{ p: 3, pb: 1 }} dir="ltr">
+        <ReactApexChart type="line" series={CHART_DATA} options={chartOptions} height={364} />
+      </Box>
+    </Card>
+  );
+}
