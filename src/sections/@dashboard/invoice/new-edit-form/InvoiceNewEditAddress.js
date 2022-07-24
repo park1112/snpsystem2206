@@ -7,15 +7,85 @@ import { Stack, Divider, Typography, Button } from '@mui/material';
 import useResponsive from '../../../../hooks/useResponsive';
 import useToggle from '../../../../hooks/useToggle';
 // _mock
-import { _invoiceAddressFrom, _invoiceAddressTo } from '../../../../_mock';
+// import { _invoiceAddressFrom, _invoiceAddressTo } from '../../../../_mock';
 // components
 import Iconify from '../../../../components/Iconify';
 //
 import InvoiceAddressListDialog from './InvoiceAddressListDialog';
+import { useSnackbar } from 'notistack';
+import { initializeApp } from 'firebase/app';
+import { FIREBASE_API } from '../../../../config';
+import { collection, getFirestore, onSnapshot, query } from 'firebase/firestore';
+import { useEffect, useRef, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
 export default function InvoiceNewEditAddress() {
+  // 거래처 목록 및 거래처 필드 목록 가져옴
+  const { enqueueSnackbar } = useSnackbar();
+  const firebaseApp = initializeApp(FIREBASE_API);
+
+  const DB = getFirestore(firebaseApp);
+
+  const [User, setUser] = useState([]);
+  const userData = useRef([]);
+
+  // 거래처 필드 목록 불러오기
+  // useEffect(
+  //   () =>
+  //     onSnapshot(query(collection(DB, 'inandout')), (snapshot) => {
+  //       // messagesDBlist();
+  //       // setPosts(snapshot.where('name', '==', '박 현재').get());
+
+  //       data.current = [];
+  //       snapshot.docs.forEach((doc, i) => {
+  //         if (doc.data()) {
+  //           data.current[i] = doc.data();
+  //         }
+  //       });
+  //       setPosts([...data.current]);
+  //     }),
+  //   [DB]
+  // );
+  // // console.log(post);
+
+  // 거래처 목록 불러오기
+  useEffect(
+    () =>
+      onSnapshot(query(collection(DB, 'client')), (snapshot) => {
+        // messagesDBlist();
+        // setPosts(snapshot.where('name', '==', '박 현재').get());
+
+        userData.current = [];
+        snapshot.docs.forEach((doc, i) => {
+          if (doc.data()) {
+            const st = doc.data().creatTime.seconds * 1000;
+            const up = doc.data().updateTime.seconds * 1000;
+            userData.current[i] = {
+              name: doc.data().name,
+              phone: doc.data().phone,
+              companyNumber: doc.data().companyNumber,
+              bank: doc.data().bank,
+              bankNumber: doc.data().bankNumber,
+              address: doc.data().address,
+              division: doc.data().division,
+              bankUserName: doc.data().bankUserName,
+              id: doc.data().id,
+              avatarUrl: doc.data().avatarUrl,
+              creatTime: new Date(st),
+              updateTime: new Date(up),
+            };
+          }
+        });
+
+        setUser([...userData.current]);
+      }),
+    [DB]
+  );
+  console.log(User);
+
+  // 거래처 목록 및 거래처 필드 목록 가져옴
+
   const {
     watch,
     setValue,
@@ -54,11 +124,11 @@ export default function InvoiceNewEditAddress() {
             onClose={onCloseFrom}
             selected={(selectedId) => invoiceFrom?.id === selectedId}
             onSelect={(address) => setValue('invoiceFrom', address)}
-            addressOptions={_invoiceAddressFrom}
+            addressOptions={User}
           />
         </Stack>
 
-        <AddressInfo name={invoiceFrom.name} address={invoiceFrom.address} phone={invoiceFrom.phone} />
+        <AddressInfo name={invoiceFrom?.name} address={invoiceFrom?.address} phone={invoiceFrom?.phone} />
       </Stack>
 
       <Stack sx={{ width: 1 }}>
@@ -80,7 +150,7 @@ export default function InvoiceNewEditAddress() {
             onClose={onCloseTo}
             selected={(selectedId) => invoiceTo?.id === selectedId}
             onSelect={(address) => setValue('invoiceTo', address)}
-            addressOptions={_invoiceAddressTo}
+            addressOptions={User}
           />
         </Stack>
 
@@ -109,9 +179,9 @@ function AddressInfo({ name, address, phone }) {
     <>
       <Typography variant="subtitle2">{name}</Typography>
       <Typography variant="body2" sx={{ mt: 1, mb: 0.5 }}>
-        {address}
+        주소 : {address}
       </Typography>
-      <Typography variant="body2">Phone: {phone}</Typography>
+      <Typography variant="body2">전화번호 : {phone}</Typography>
     </>
   );
 }

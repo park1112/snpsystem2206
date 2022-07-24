@@ -1,5 +1,5 @@
 import sumBy from 'lodash/sumBy';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // next
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -30,7 +30,7 @@ import useTabs from '../../../hooks/useTabs';
 import useSettings from '../../../hooks/useSettings';
 import useTable, { getComparator, emptyRows } from '../../../hooks/useTable';
 // _mock_
-import { _invoices } from '../../../_mock';
+// import { _invoices } from '../../../_mock';
 // layouts
 import Layout from '../../../layouts';
 // components
@@ -43,6 +43,9 @@ import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } fr
 // sections
 import InvoiceAnalytic from '../../../sections/@dashboard/invoice/InvoiceAnalytic';
 import { InvoiceTableRow, InvoiceTableToolbar } from '../../../sections/@dashboard/invoice/list';
+import { initializeApp } from 'firebase/app';
+import { FIREBASE_API } from '../../../config';
+import { collection, getFirestore, onSnapshot, query } from 'firebase/firestore';
 
 // ----------------------------------------------------------------------
 
@@ -56,8 +59,8 @@ const SERVICE_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'invoiceNumber', label: '출고내역', align: 'left' },
-  { id: 'createDate', label: '출고날짜', align: 'left' },
+  { id: 'invoiceNumber', label: '입고내역', align: 'left' },
+  { id: 'createDate', label: '입고날짜', align: 'left' },
   { id: 'dueDate', label: '결제일', align: 'left' },
   { id: 'price', label: '부자제수량', align: 'center', width: 140 },
   { id: 'sent', label: '수량', align: 'center', width: 140 },
@@ -74,6 +77,45 @@ InvoiceList.getLayout = function getLayout(page) {
 // ----------------------------------------------------------------------
 
 export default function InvoiceList() {
+  // 거래처 목록 및 거래처 필드 목록 가져옴
+
+  const firebaseApp = initializeApp(FIREBASE_API);
+
+  const DB = getFirestore(firebaseApp);
+
+  // const [Invoice, setInvoice] = useState([]);
+
+  const [tableData, setTableData] = useState([]);
+  const userData = useRef([]);
+
+  // 거래처 목록 불러오기
+  useEffect(
+    () =>
+      onSnapshot(query(collection(DB, 'invoice')), (snapshot) => {
+        // messagesDBlist();
+        // setPosts(snapshot.where('name', '==', '박 현재').get());
+
+        userData.current = [];
+        snapshot.docs.forEach((doc, i) => {
+          if (doc.data()) {
+            userData.current[i] = doc.data();
+            const st = doc.data().createDate.seconds * 1000;
+            const du = doc.data().dueDate.seconds * 1000;
+
+            userData.current[i].createDate = new Date(st);
+            userData.current[i].dueDate = new Date(du);
+          }
+        });
+
+        setTableData([...userData.current]);
+      }),
+    [DB]
+  );
+  // console.log(_invoices);
+  console.log(tableData);
+
+  // 거래처 목록 및 거래처 필드 목록 가져옴
+
   const theme = useTheme();
 
   const { themeStretch } = useSettings();
@@ -99,7 +141,7 @@ export default function InvoiceList() {
     onChangeRowsPerPage,
   } = useTable({ defaultOrderBy: 'createDate' });
 
-  const [tableData, setTableData] = useState(_invoices);
+  // const [tableData, setTableData] = useState(Invoice);
 
   const [filterName, setFilterName] = useState('');
 
@@ -123,13 +165,13 @@ export default function InvoiceList() {
   const handleDeleteRow = (id) => {
     const deleteRow = tableData.filter((row) => row.id !== id);
     setSelected([]);
-    setTableData(deleteRow);
+    // setTableData(deleteRow);
   };
 
   const handleDeleteRows = (selected) => {
     const deleteRows = tableData.filter((row) => !selected.includes(row.id));
     setSelected([]);
-    setTableData(deleteRows);
+    // setTableData(deleteRows);
   };
 
   const handleEditRow = (id) => {
@@ -164,33 +206,33 @@ export default function InvoiceList() {
   const getTotalPriceByStatus = (status) =>
     sumBy(
       tableData.filter((item) => item.status === status),
-      'totalPrice'
+      'totalCount'
     );
 
   const getPercentByStatus = (status) => (getLengthByStatus(status) / tableData.length) * 100;
 
   const TABS = [
     { value: 'all', label: 'All', color: 'info', count: tableData.length },
-    { value: '출고준비중', label: '출고준비중', color: 'success', count: getLengthByStatus('출고준비중') },
-    { value: '출고완료', label: '출고완료', color: 'warning', count: getLengthByStatus('출고완료') },
-    { value: '결제예정', label: '결제예정', color: 'error', count: getLengthByStatus('결제예정') },
-    { value: '미결제', label: '미결제', color: 'default', count: getLengthByStatus('미결제') },
+    { value: '입고준비중', label: '입고준비중', color: 'success', count: getLengthByStatus('입고준비중') },
+    { value: '정산대기', label: '정산대기', color: 'warning', count: getLengthByStatus('정산대기') },
+    { value: '정산완료', label: '정산완료', color: 'error', count: getLengthByStatus('정산완료') },
+    { value: 'default', label: '미입력', color: 'default', count: getLengthByStatus('default') },
   ];
 
   return (
-    <Page title="Invoice: List">
+    <Page title="입고 내역: 입고 목록">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="출고 내역"
+          heading="입고 내역"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'Invoices', href: PATH_DASHBOARD.invoice.root },
-            { name: 'List' },
+            { name: '입고 목록' },
           ]}
           action={
             <NextLink href={PATH_DASHBOARD.invoice.new} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                출고 추가
+                입고 송장 등록
               </Button>
             </NextLink>
           }
@@ -212,34 +254,34 @@ export default function InvoiceList() {
                 color={theme.palette.info.main}
               />
               <InvoiceAnalytic
-                title="출고준비중"
-                total={getLengthByStatus('출고준비중')}
-                percent={getPercentByStatus('출고준비중')}
-                price={getTotalPriceByStatus('출고준비중')}
+                title="입고준비중"
+                total={getLengthByStatus('입고준비중')}
+                percent={getPercentByStatus('입고준비중')}
+                price={getTotalPriceByStatus('입고준비중')}
                 icon="eva:checkmark-circle-2-fill"
                 color={theme.palette.success.main}
               />
               <InvoiceAnalytic
-                title="출고완료"
-                total={getLengthByStatus('출고완료')}
-                percent={getPercentByStatus('출고완료')}
-                price={getTotalPriceByStatus('출고완료')}
+                title="정산대기"
+                total={getLengthByStatus('정산대기')}
+                percent={getPercentByStatus('정산대기')}
+                price={getTotalPriceByStatus('정산대기')}
                 icon="eva:clock-fill"
                 color={theme.palette.warning.main}
               />
               <InvoiceAnalytic
-                title="결제예정"
-                total={getLengthByStatus('결제예정')}
-                percent={getPercentByStatus('결제예정')}
-                price={getTotalPriceByStatus('결제예정')}
+                title="정산완료"
+                total={getLengthByStatus('정산완료')}
+                percent={getPercentByStatus('정산완료')}
+                price={getTotalPriceByStatus('정산완료')}
                 icon="eva:bell-fill"
                 color={theme.palette.error.main}
               />
               <InvoiceAnalytic
-                title="미결제"
-                total={getLengthByStatus('미결제')}
-                percent={getPercentByStatus('미결제')}
-                price={getTotalPriceByStatus('미결제')}
+                title="미입력"
+                total={getLengthByStatus('default')}
+                percent={getPercentByStatus('default')}
+                price={getTotalPriceByStatus('default')}
                 icon="eva:file-fill"
                 color={theme.palette.text.secondary}
               />
@@ -272,6 +314,7 @@ export default function InvoiceList() {
 
           <Divider />
 
+          {/* 찾기 */}
           <InvoiceTableToolbar
             filterName={filterName}
             filterService={filterService}
@@ -287,6 +330,7 @@ export default function InvoiceList() {
             }}
             optionsService={SERVICE_OPTIONS}
           />
+          {/* 찾기 */}
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800, position: 'relative' }}>

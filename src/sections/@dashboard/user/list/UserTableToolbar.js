@@ -19,7 +19,7 @@ export default function UserTableToolbar({ filterName, filterRole, onFilterName,
       <TextField
         fullWidth
         select
-        label="Role"
+        label="구분"
         value={filterRole}
         onChange={onFilterRole}
         SelectProps={{

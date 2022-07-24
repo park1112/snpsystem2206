@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 export const fullName = [
-  '합천유통 1공장',
+  '손승완',
   'Lucian Obrien',
   'Deja Brady',
   'Harrison Stein',

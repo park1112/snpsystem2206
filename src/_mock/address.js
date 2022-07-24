@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 
 export const fullAddress = [
-  '출하주 : 손승완 , 주소 : 경남 합천군 대야로 1184',
+  '경남 합천군 대야로 1184',
   '1147 Rohan Drive Suite 819 - Burlington, VT / 82021',
   '18605 Thompson Circle Apt. 086 - Idaho Falls, WV / 50337',
   '110 Lamar Station Apt. 730 - Hagerstown, OK / 49808',

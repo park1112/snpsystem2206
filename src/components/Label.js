@@ -8,6 +8,8 @@ const RootStyle = styled('span')(({ theme, ownerState }) => {
   const isLight = theme.palette.mode === 'light';
   const { color, variant } = ownerState;
 
+  console.log('asdfasdf', color);
+
   const styleFilled = (color) => ({
     color: theme.palette[color].contrastText,
     backgroundColor: theme.palette[color].main,

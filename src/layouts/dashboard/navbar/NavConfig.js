@@ -45,26 +45,26 @@ const navConfig = [
         icon: ICONS.user,
         children: [
           { title: '거래처 등록', path: PATH_DASHBOARD.user.new },
-          { title: '거래처 목록', path: PATH_DASHBOARD.user.cards },
-          { title: '거래처 수정', path: PATH_DASHBOARD.user.account },
+          { title: '거래처 목록', path: PATH_DASHBOARD.user.list },
+          // { title: '거래처 수정', path: PATH_DASHBOARD.user.account },
           // { title: 'profile', path: PATH_DASHBOARD.user.profile },
           // { title: 'list', path: PATH_DASHBOARD.user.list },
-          { title: 'edit', path: PATH_DASHBOARD.user.demoEdit },
+          // { title: 'edit', path: PATH_DASHBOARD.user.demoEdit },
         ],
       },
 
       // 출고
-      {
-        title: '출고',
-        path: PATH_DASHBOARD.release.root,
-        icon: ICONS.invoice,
-        children: [
-          { title: '출고 목록', path: PATH_DASHBOARD.release.list },
-          { title: '출고 송장', path: PATH_DASHBOARD.release.demoView },
-          { title: '출고 송장등록', path: PATH_DASHBOARD.release.new },
-          { title: 'edit', path: PATH_DASHBOARD.release.demoEdit },
-        ],
-      },
+      // {
+      //   title: '출고',
+      //   path: PATH_DASHBOARD.release.root,
+      //   icon: ICONS.invoice,
+      //   children: [
+      //     { title: '출고 목록', path: PATH_DASHBOARD.release.list },
+      //     { title: '출고 송장', path: PATH_DASHBOARD.release.demoView },
+      //     { title: '출고 송장등록', path: PATH_DASHBOARD.release.new },
+      //     { title: 'edit', path: PATH_DASHBOARD.release.demoEdit },
+      //   ],
+      // },
 
       // INVOICE
       {
@@ -72,10 +72,10 @@ const navConfig = [
         path: PATH_DASHBOARD.invoice.root,
         icon: ICONS.invoice,
         children: [
+          { title: '입고 송장 등록', path: PATH_DASHBOARD.invoice.new },
           { title: '입고 목록', path: PATH_DASHBOARD.invoice.list },
-          { title: '입고 송장', path: PATH_DASHBOARD.invoice.demoView },
-          { title: '입고 송장등록', path: PATH_DASHBOARD.invoice.new },
-          { title: 'edit', path: PATH_DASHBOARD.invoice.demoEdit },
+          // { title: '입고 송장', path: PATH_DASHBOARD.invoice.demoView },
+          // { title: 'edit', path: PATH_DASHBOARD.invoice.demoEdit },
         ],
       },
 

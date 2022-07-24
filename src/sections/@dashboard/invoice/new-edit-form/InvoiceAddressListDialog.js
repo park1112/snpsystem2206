@@ -7,6 +7,9 @@ import Scrollbar from '../../../../components/Scrollbar';
 
 // ----------------------------------------------------------------------
 
+import { useRouter } from 'next/router';
+import { PATH_DASHBOARD } from '../../../../routes/paths';
+
 InvoiceAddressListDialog.propTypes = {
   addressOptions: PropTypes.array,
   onClose: PropTypes.func,
@@ -16,23 +19,29 @@ InvoiceAddressListDialog.propTypes = {
 };
 
 export default function InvoiceAddressListDialog({ open, selected, onClose, onSelect, addressOptions }) {
+  const { push } = useRouter();
+
   const handleSelect = (address) => {
     onSelect(address);
     onClose();
+  };
+  const pushUrl = () => {
+    push(PATH_DASHBOARD.user.new);
   };
 
   return (
     <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 2.5, px: 3 }}>
-        <Typography variant="h6"> Select address </Typography>
+        <Typography variant="h6"> 거래처를 선택해주세요. </Typography>
 
         <Button
+          onClick={pushUrl}
           size="small"
           variant="outlined"
           startIcon={<Iconify icon="eva:plus-fill" />}
           sx={{ alignSelf: 'flex-end' }}
         >
-          Add New
+          거래처 추가
         </Button>
       </Stack>
 
@@ -52,7 +61,7 @@ export default function InvoiceAddressListDialog({ open, selected, onClose, onSe
             <Typography variant="subtitle2">{address.name}</Typography>
 
             <Typography variant="caption" sx={{ color: 'primary.main', my: 0.5, fontWeight: 'fontWeightMedium' }}>
-              {address.company}
+              {address.companyNumber}
             </Typography>
 
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>

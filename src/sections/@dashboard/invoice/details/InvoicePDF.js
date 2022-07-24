@@ -32,7 +32,7 @@ export default function InvoicePDF({ invoice }) {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={[styles.gridContainer, styles.mb40]}>
-          <Image source="/logo/logo_full.jpg" style={{ height: 32 }} />
+          <Image source="/logo/snp_logo_full.png" style={{ height: 32 }} />
           <View style={{ alignItems: 'flex-end', flexDirection: 'column' }}>
             <Text style={styles.h3}>{status}</Text>
             <Text> {invoiceNumber} </Text>
@@ -171,12 +171,12 @@ export default function InvoicePDF({ invoice }) {
 
         <View style={[styles.gridContainer, styles.footer]}>
           <View style={styles.col8}>
-            <Text style={styles.subtitle2}>NOTES</Text>
-            <Text>We appreciate your business. Should you need us to add VAT or extra notes let us know!</Text>
+            <Text style={styles.subtitle2}>010-2497-0302</Text>
+            <Text>에스엔피를 이용해 주셔서 감사합니다. 항상 좋은 제품으로 보답하겠습니다!</Text>
           </View>
           <View style={[styles.col4, styles.alignRight]}>
-            <Text style={styles.subtitle2}>Have a Question?</Text>
-            <Text>support@abcapp.com</Text>
+            <Text style={styles.subtitle2}>(주)농업회사법인 에스엔피</Text>
+            <Text>대표 손승완</Text>
           </View>
         </View>
       </Page>

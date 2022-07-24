@@ -45,13 +45,14 @@ export default function InvoiceToolbar({ invoice }) {
           </Tooltip>
 
           <Tooltip title="View">
-            <IconButton onClick={onOpen}>
+            {/* <IconButton onClick={onOpen}> */}
+            <IconButton>
               <Iconify icon={'eva:eye-fill'} />
             </IconButton>
           </Tooltip>
 
           <PDFDownloadLink
-            document={<InvoicePDF invoice={invoice} />}
+            // document={<InvoicePDF invoice={invoice} />}
             fileName={invoice.invoiceNumber}
             style={{ textDecoration: 'none' }}
           >
@@ -83,14 +84,14 @@ export default function InvoiceToolbar({ invoice }) {
           </Tooltip>
         </Stack>
 
-        <Button
+        {/* <Button
           color="inherit"
           variant="outlined"
           startIcon={<Iconify icon={'eva:checkmark-fill'} />}
           sx={{ alignSelf: 'flex-end' }}
         >
           출고완료
-        </Button>
+        </Button> */}
       </Stack>
 
       <Dialog fullScreen open={open}>

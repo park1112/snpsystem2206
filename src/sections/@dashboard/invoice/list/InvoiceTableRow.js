@@ -6,7 +6,7 @@ import { Checkbox, TableRow, TableCell, Typography, Stack, Link, MenuItem } from
 // utils
 import { fDate } from '../../../../utils/formatTime';
 import createAvatar from '../../../../utils/createAvatar';
-import { fCurrency } from '../../../../utils/formatNumber';
+import { fCurrency, fNumber } from '../../../../utils/formatNumber';
 // components
 import Label from '../../../../components/Label';
 import Avatar from '../../../../components/Avatar';
@@ -27,7 +27,7 @@ InvoiceTableRow.propTypes = {
 export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { sent, invoiceNumber, createDate, dueDate, status, invoiceTo, totalPrice } = row;
+  const { invoiceNumber, createDate, dueDate, status, invoiceTo, servicecount, totalCount } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -65,24 +65,26 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
 
       <TableCell align="left">{fDate(dueDate)}</TableCell>
 
-      <TableCell align="center">{fCurrency(totalPrice)}</TableCell>
+      <TableCell align="center">{fNumber(servicecount)}</TableCell>
 
+      <TableCell align="center">{fNumber(totalCount)}</TableCell>
+      {/* 
       <TableCell align="center" sx={{ textTransform: 'capitalize' }}>
         {sent}
-      </TableCell>
+      </TableCell> */}
 
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={
-            (status === '출고준비중' && 'success') ||
-            (status === '출고완료' && 'warning') ||
-            (status === '결제예정' && 'error') ||
-            '미결제'
+            (status === '입고준비중' && 'success') ||
+            (status === '정산대기' && 'warning') ||
+            (status === '정산완료' && 'error') ||
+            'default'
           }
           sx={{ textTransform: 'capitalize' }}
         >
-          {status}
+          {(status === 'default' && '미입력') || status}
         </Label>
       </TableCell>
 
@@ -101,7 +103,7 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
                 sx={{ color: 'error.main' }}
               >
                 <Iconify icon={'eva:trash-2-outline'} />
-                Delete
+                삭제
               </MenuItem>
 
               <MenuItem
@@ -111,7 +113,7 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
                 }}
               >
                 <Iconify icon={'eva:eye-fill'} />
-                View
+                보기
               </MenuItem>
 
               <MenuItem
@@ -121,7 +123,7 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
                 }}
               >
                 <Iconify icon={'eva:edit-fill'} />
-                Edit
+                수정
               </MenuItem>
             </>
           }

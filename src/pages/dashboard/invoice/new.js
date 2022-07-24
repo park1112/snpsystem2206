@@ -24,14 +24,14 @@ export default function InvoiceCreate() {
   const { themeStretch } = useSettings();
 
   return (
-    <Page title="출고">
+    <Page title="입고">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="출고 등록"
+          heading="입고 등록"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            { name: '출고', href: PATH_DASHBOARD.invoice.list },
-            { name: '출고 등록' },
+            { name: '입고', href: PATH_DASHBOARD.invoice.list },
+            { name: '입고 등록' },
           ]}
         />
 

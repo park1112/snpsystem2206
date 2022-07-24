@@ -21,7 +21,21 @@ UserTableRow.propTypes = {
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, avatarUrl, company, role, isVerified, status } = row;
+  const {
+    name,
+    phone,
+    companyNumber,
+    bank,
+    bankNumber,
+    address,
+    division,
+    bankUserName,
+    avatarUrl,
+    company,
+    role,
+    isVerified,
+    status,
+  } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -38,21 +52,32 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
-
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>
       </TableCell>
-
-      <TableCell align="left">{company}</TableCell>
-
+      <TableCell align="left">{division}</TableCell>
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-        {role}
+        {phone}
       </TableCell>
-
-      <TableCell align="center">
+      <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+        {companyNumber}
+      </TableCell>
+      <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+        {bank}
+      </TableCell>
+      <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+        {bankNumber}
+      </TableCell>
+      <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+        {bankUserName}
+      </TableCell>{' '}
+      <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+        {address}
+      </TableCell>
+      {/* <TableCell align="center">
         <Iconify
           icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
           sx={{
@@ -62,9 +87,8 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
             ...(!isVerified && { color: 'warning.main' }),
           }}
         />
-      </TableCell>
-
-      <TableCell align="left">
+      </TableCell> */}
+      {/* <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={(status === 'banned' && 'error') || 'success'}
@@ -72,8 +96,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         >
           {status}
         </Label>
-      </TableCell>
-
+      </TableCell> */}
       <TableCell align="right">
         <TableMoreMenu
           open={openMenu}
@@ -89,7 +112,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
                 sx={{ color: 'error.main' }}
               >
                 <Iconify icon={'eva:trash-2-outline'} />
-                Delete
+                삭제
               </MenuItem>
               <MenuItem
                 onClick={() => {
@@ -98,7 +121,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
                 }}
               >
                 <Iconify icon={'eva:edit-fill'} />
-                Edit
+                수정
               </MenuItem>
             </>
           }

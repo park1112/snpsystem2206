@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 // utils
 import { fDate } from '../../../../utils/formatTime';
-import { fCurrency } from '../../../../utils/formatNumber';
+import { fCurrency, fNumber } from '../../../../utils/formatNumber';
 // components
 import Label from '../../../../components/Label';
 import Image from '../../../../components/Image';
@@ -42,6 +42,8 @@ InvoiceDetails.propTypes = {
 export default function InvoiceDetails({ invoice }) {
   const theme = useTheme();
 
+  console.log(invoice);
+
   if (!invoice) {
     return null;
   }
@@ -55,9 +57,13 @@ export default function InvoiceDetails({ invoice }) {
     invoiceTo,
     createDate,
     totalPrice,
+    priceTotal,
     invoiceFrom,
     invoiceNumber,
     subTotalPrice,
+    service,
+    totalCount,
+    carriage,
   } = invoice;
 
   return (
@@ -81,10 +87,10 @@ export default function InvoiceDetails({ invoice }) {
               <Label
                 variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                 color={
-                  (status === '출고준비중' && 'success') ||
-                  (status === '출고완료' && 'warning') ||
-                  (status === '결제예정' && 'error') ||
-                  '미결제'
+                  (status === '입고준비중' && 'success') ||
+                  (status === '정산대기' && 'warning') ||
+                  (status === '정산완료' && 'error') ||
+                  'default'
                 }
                 sx={{ textTransform: 'uppercase', mb: 1 }}
               >
@@ -140,8 +146,9 @@ export default function InvoiceDetails({ invoice }) {
                 <TableRow>
                   <TableCell width={40}>#</TableCell>
                   <TableCell align="left">내용</TableCell>
-                  <TableCell align="left">부자제 수량</TableCell>
-                  <TableCell align="right">수량</TableCell>
+                  <TableCell align="right">부자제명</TableCell>
+                  <TableCell align="right">부자제 수량</TableCell>
+                  <TableCell align="right">제품 수량</TableCell>
                   <TableCell align="right">합계 수량 </TableCell>
                 </TableRow>
               </TableHead>
@@ -163,9 +170,10 @@ export default function InvoiceDetails({ invoice }) {
                         </Typography>
                       </Box>
                     </TableCell>
-                    <TableCell align="left">{row.quantity}</TableCell>
-                    <TableCell align="right">{fCurrency(row.price)}</TableCell>
-                    <TableCell align="right">{fCurrency(row.price * row.quantity)}</TableCell>
+                    <TableCell align="right">{row.service}</TableCell>
+                    <TableCell align="right">{row.quantity}</TableCell>
+                    <TableCell align="right">{fNumber(row.price)}</TableCell>
+                    <TableCell align="right">{fNumber(row.price * row.quantity)}</TableCell>
                   </TableRow>
                 ))}
 
@@ -173,21 +181,11 @@ export default function InvoiceDetails({ invoice }) {
                   <TableCell colSpan={3} />
                   <TableCell align="right">
                     <Box sx={{ mt: 2 }} />
-                    <Typography>합계수량</Typography>
+                    <Typography>운송비</Typography>
                   </TableCell>
                   <TableCell align="right" width={120}>
                     <Box sx={{ mt: 2 }} />
-                    <Typography>{fCurrency(subTotalPrice)}</Typography>
-                  </TableCell>
-                </RowResultStyle>
-
-                <RowResultStyle>
-                  <TableCell colSpan={3} />
-                  <TableCell align="right">
-                    <Typography>부자제 합계</Typography>
-                  </TableCell>
-                  <TableCell align="right" width={120}>
-                    <Typography sx={{ color: 'error.main' }}>{discount && fCurrency(-discount)}</Typography>
+                    <Typography>{fNumber(carriage)}</Typography>
                   </TableCell>
                 </RowResultStyle>
 
@@ -197,17 +195,37 @@ export default function InvoiceDetails({ invoice }) {
                     <Typography>로스</Typography>
                   </TableCell>
                   <TableCell align="right" width={120}>
-                    <Typography>{taxes && fCurrency(taxes)}</Typography>
+                    <Typography sx={{ color: 'error.main' }}>{discount && fNumber(-discount)}</Typography>
                   </TableCell>
                 </RowResultStyle>
 
                 <RowResultStyle>
                   <TableCell colSpan={3} />
                   <TableCell align="right">
-                    <Typography variant="h6">Total</Typography>
+                    <Typography>할인금액</Typography>
+                  </TableCell>
+                  <TableCell align="right" width={120}>
+                    <Typography>{discount && fNumber(discount)}</Typography>
+                  </TableCell>
+                </RowResultStyle>
+
+                <RowResultStyle>
+                  <TableCell colSpan={3} />
+                  <TableCell align="right">
+                    <Typography>총합계수량 </Typography>
+                  </TableCell>
+                  <TableCell align="right" width={120}>
+                    <Typography>{totalCount && fNumber(totalCount)}</Typography>
+                  </TableCell>
+                </RowResultStyle>
+
+                <RowResultStyle>
+                  <TableCell colSpan={3} />
+                  <TableCell align="right">
+                    <Typography variant="h6">총 결제금액</Typography>
                   </TableCell>
                   <TableCell align="right" width={140}>
-                    <Typography variant="h6">{fCurrency(totalPrice)}</Typography>
+                    <Typography variant="h6">{fNumber(priceTotal)}</Typography>
                   </TableCell>
                 </RowResultStyle>
               </TableBody>

@@ -68,7 +68,7 @@ export default function CalendarForm({ event, range, onCancel }) {
   const isCreating = Object.keys(event).length === 0;
 
   const EventSchema = Yup.object().shape({
-    title: Yup.string().max(255).required('Title is required'),
+    title: Yup.string().max(255).required('제목은 필수 항목입니다.'),
     description: Yup.string().max(5000),
   });
 
@@ -115,7 +115,7 @@ export default function CalendarForm({ event, range, onCancel }) {
   const firebaseApp = initializeApp(FIREBASE_API);
   const DB = getFirestore(firebaseApp);
 
-  console.log('dfdfdfe', event.id);
+  // console.log('dfdfdfe', event.id);
   const sendPost = async (data) => {
     if (loading) return;
     setLoading(true);

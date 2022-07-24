@@ -1,8 +1,9 @@
 import { paramCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // next
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
 // @mui
 import {
   Box,
@@ -39,30 +40,26 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../../components/table';
 // sections
 import { UserTableToolbar, UserTableRow } from '../../../sections/@dashboard/user/list';
+import { collection, getFirestore, onSnapshot, query, deleteDoc, doc } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { FIREBASE_API } from '../../../config';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'active', 'banned'];
+// const STATUS_OPTIONS = ['all', 'active', 'banned'];
+const STATUS_OPTIONS = ['all'];
 
-const ROLE_OPTIONS = [
-  'all',
-  'ux designer',
-  'full stack designer',
-  'backend developer',
-  'project manager',
-  'leader',
-  'ui designer',
-  'ui/ux designer',
-  'front end developer',
-  'full stack developer',
-];
+const ROLE_OPTIONS = ['all', '유통시장', '작업팀', '법인', '개인상회', '온라인'];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
-  { id: 'role', label: 'Role', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'name', label: '이름', align: 'left' },
+  { id: 'division', label: '구분', align: 'left' },
+  { id: 'phone', label: '전화번호', align: 'left' },
+  { id: 'companyNumber', label: '사업자번호', align: 'left' },
+  { id: 'bank', label: '은행명', align: 'center' },
+  { id: 'bankNumber', label: '계좌번호', align: 'left' },
+  { id: 'bankUserName', label: '예금주', align: 'left' },
+  { id: 'address', label: '주소', align: 'left' },
   { id: '' },
 ];
 
@@ -74,6 +71,71 @@ UserList.getLayout = function getLayout(page) {
 // ----------------------------------------------------------------------
 
 export default function UserList() {
+  // 거래처 목록 및 거래처 필드 목록 가져옴
+  const { enqueueSnackbar } = useSnackbar();
+  const firebaseApp = initializeApp(FIREBASE_API);
+
+  const DB = getFirestore(firebaseApp);
+
+  const [post, setPosts] = useState([]);
+  const data = useRef([]);
+  const userData = useRef([]);
+
+  // 거래처 필드 목록 불러오기
+  useEffect(
+    () =>
+      onSnapshot(query(collection(DB, 'inandout')), (snapshot) => {
+        // messagesDBlist();
+        // setPosts(snapshot.where('name', '==', '박 현재').get());
+
+        data.current = [];
+        snapshot.docs.forEach((doc, i) => {
+          if (doc.data()) {
+            data.current[i] = doc.data();
+          }
+        });
+        setPosts([...data.current]);
+      }),
+    [DB]
+  );
+  // console.log(post);
+
+  // 거래처 목록 불러오기
+  useEffect(
+    () =>
+      onSnapshot(query(collection(DB, 'client')), (snapshot) => {
+        // messagesDBlist();
+        // setPosts(snapshot.where('name', '==', '박 현재').get());
+
+        userData.current = [];
+        snapshot.docs.forEach((doc, i) => {
+          if (doc.data()) {
+            const st = doc.data().creatTime.seconds * 1000;
+            const up = doc.data().updateTime.seconds * 1000;
+            userData.current[i] = {
+              name: doc.data().name,
+              phone: doc.data().phone,
+              companyNumber: doc.data().companyNumber,
+              bank: doc.data().bank,
+              bankNumber: doc.data().bankNumber,
+              address: doc.data().address,
+              division: doc.data().division,
+              bankUserName: doc.data().bankUserName,
+              id: doc.data().id,
+              avatarUrl: doc.data().avatarUrl,
+              creatTime: new Date(st),
+              updateTime: new Date(up),
+            };
+          }
+        });
+
+        setTableData([...userData.current]);
+      }),
+    [DB]
+  );
+  // console.log(userList);
+
+  // 거래처 목록 및 거래처 필드 목록 가져옴
   const {
     dense,
     page,
@@ -97,7 +159,7 @@ export default function UserList() {
 
   const { push } = useRouter();
 
-  const [tableData, setTableData] = useState(_userList);
+  const [tableData, setTableData] = useState([]);
 
   const [filterName, setFilterName] = useState('');
 
@@ -114,10 +176,14 @@ export default function UserList() {
     setFilterRole(event.target.value);
   };
 
-  const handleDeleteRow = (id) => {
-    const deleteRow = tableData.filter((row) => row.id !== id);
-    setSelected([]);
-    setTableData(deleteRow);
+  const handleDeleteRow = async (id) => {
+    try {
+      await deleteDoc(doc(DB, 'client', id));
+      setSelected([]);
+      enqueueSnackbar('유저 삭제 성공!');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleDeleteRows = (selected) => {
@@ -127,7 +193,7 @@ export default function UserList() {
   };
 
   const handleEditRow = (id) => {
-    push(PATH_DASHBOARD.user.edit(paramCase(id)));
+    push(PATH_DASHBOARD.user.edit(id));
   };
 
   const dataFiltered = applySortFilter({
@@ -146,19 +212,19 @@ export default function UserList() {
     (!dataFiltered.length && !!filterStatus);
 
   return (
-    <Page title="User: List">
+    <Page title="거래처: 목록">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="User List"
+          heading="거래처 목록"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            { name: 'User', href: PATH_DASHBOARD.user.root },
+            { name: '거래처', href: PATH_DASHBOARD.user.root },
             { name: 'List' },
           ]}
           action={
             <NextLink href={PATH_DASHBOARD.user.new} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New User
+                거래처 추가
               </Button>
             </NextLink>
           }
@@ -173,13 +239,15 @@ export default function UserList() {
             onChange={onChangeFilterStatus}
             sx={{ px: 2, bgcolor: 'background.neutral' }}
           >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
-            ))}
+            {/* 거래처 탭바 수정해야됨  */}
+            {STATUS_OPTIONS
+              ? STATUS_OPTIONS.map((tab) => <Tab disableRipple key={tab} label={tab} value={tab} />)
+              : null}
           </Tabs>
 
           <Divider />
 
+          {/* 검색부분 */}
           <UserTableToolbar
             filterName={filterName}
             filterRole={filterRole}
@@ -235,7 +303,7 @@ export default function UserList() {
                       selected={selected.includes(row.id)}
                       onSelectRow={() => onSelectRow(row.id)}
                       onDeleteRow={() => handleDeleteRow(row.id)}
-                      onEditRow={() => handleEditRow(row.name)}
+                      onEditRow={() => handleEditRow(row.id)}
                     />
                   ))}
 
@@ -260,7 +328,7 @@ export default function UserList() {
 
             <FormControlLabel
               control={<Switch checked={dense} onChange={onChangeDense} />}
-              label="Dense"
+              label="작게 보기"
               sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
             />
           </Box>

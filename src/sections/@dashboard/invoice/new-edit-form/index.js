@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 // next
 import { useRouter } from 'next/router';
 // form
@@ -19,6 +19,10 @@ import { FormProvider } from '../../../../components/hook-form';
 import InvoiceNewEditDetails from './InvoiceNewEditDetails';
 import InvoiceNewEditAddress from './InvoiceNewEditAddress';
 import InvoiceNewEditStatusDate from './InvoiceNewEditStatusDate';
+import { initializeApp } from 'firebase/app';
+import { FIREBASE_API } from '../../../../config';
+import { collection, doc, getFirestore, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
@@ -34,10 +38,14 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
 
   const [loadingSend, setLoadingSend] = useState(false);
 
+  const totaladd = useRef(0);
+  const totaladdA = useRef(0);
+
   const NewUserSchema = Yup.object().shape({
-    createDate: Yup.string().nullable().required('Create date is required'),
-    dueDate: Yup.string().nullable().required('Due date is required'),
-    invoiceTo: Yup.mixed().nullable().required('Invoice to is required'),
+    // status: Yup.string().nullable().required('출고일은 필수 사항 입니다.'),
+    createDate: Yup.string().nullable().required('출고일은 필수 사항 입니다.'),
+    dueDate: Yup.string().nullable().required('결제 예정일은 필수 사항 입니다.'),
+    invoiceTo: Yup.mixed().nullable().required('도착지는 필수 사항 입니다.'),
   });
 
   const defaultValues = useMemo(
@@ -45,7 +53,7 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
       createDate: currentInvoice?.createDate || null,
       dueDate: currentInvoice?.dueDate || null,
       taxes: currentInvoice?.taxes || '',
-      status: currentInvoice?.status || 'draft',
+      status: currentInvoice?.status || 'default',
       discount: currentInvoice?.discount || '',
       invoiceFrom: currentInvoice?.invoiceFrom || _invoiceAddressFrom[0],
       invoiceTo: currentInvoice?.invoiceTo || null,
@@ -87,7 +95,111 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
     })),
   };
 
-  console.log(newInvoice);
+  // 총수량 부자제 합계 추가!!
+  const additme = values.items.map((item) => totaladd.current + item.quantity * item.price);
+  const servicecount = values.items.map((item) => totaladdA.current + item.quantity);
+  const addreduce = (add) => add.reduce((a, b) => a + b);
+
+  // 파이어베이스 추가 !!
+
+  // -------------------------- 파이어베이스
+
+  const firebaseApp = initializeApp(FIREBASE_API);
+
+  const DB = getFirestore(firebaseApp);
+
+  const citiesRef = collection(DB, 'category');
+
+  const q = query(citiesRef, where('division', '==', 'client'));
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  // 송장등록!!
+  const onSubmit = async (data) => {
+    if (loadingSave) return;
+    setLoadingSave(true);
+    // 여기 추가 !!
+    // 먼저 채팅방을 만들고 그다음 추가한다!! 아이디를 가져올수 있음!
+    // const citiesRef = collection(DB, 'calendar');
+    // const q = query(citiesRef, where('participants', 'array-contains', user ?.id || data.uid));
+    // const querySnapshot = await getDocs(q);
+
+    // querySnapshot.forEach((doc) => {
+    //   console.log(doc.id, ' => ', doc.data());
+    //   if (doc.data().name) {
+    //     chatRef.current = chatRef.current + 1;
+    //   }
+    // });
+    // console.log(chatRef);
+
+    // if (chatRef.current == 0) {
+    // 있으면 수정하기 !! .
+    if (currentInvoice) {
+      const newCityRef = doc(DB, 'invoice', currentInvoice.id);
+      const invoiceList = Object.assign(newInvoice, {
+        updateTime: new Date(),
+        totalCount: addreduce(additme),
+        servicecount: addreduce(servicecount),
+      });
+
+      await updateDoc(newCityRef, invoiceList);
+      enqueueSnackbar('이벤트 업데이트 성공!');
+    } else {
+      // 없으면 생성하기
+      const newCityRef = doc(collection(DB, 'invoice'));
+      // console.log(newCityRef.id);
+
+      const invoiceList = Object.assign(newInvoice, {
+        id: newCityRef.id,
+        invoiceNumber: newCityRef.id,
+        totalCount: addreduce(additme),
+        servicecount: addreduce(servicecount),
+
+        // totalCount: totaladd.current,
+      });
+      await setDoc(newCityRef, invoiceList);
+      enqueueSnackbar('송장 등록 성공!!');
+    }
+
+    reset();
+    setLoadingSave(true);
+    push(PATH_DASHBOARD.invoice.list);
+    // console.log(JSON.stringify(invoiceList, null, 2));
+    // push(PATH_DASHBOARD.calendar);
+
+    // 바꿔야 될것 유저의 아이디를 가지고 있는 대화상대 로 바로 가기
+  };
+
+  // const onSubmit = async () => {
+  //   setLoading(true);
+  //   console.log('클릭!!');
+  //   try {
+  //     // 파이어베이스 추가
+
+  //     // const newCityRef = doc(collection(DB, 'client'));
+  //     // console.log(newUserData);
+  //     // const list = {
+  //     //   name: newUserData.name,
+  //     //   phone: newUserData.phone,
+  //     //   companyNumber: newUserData.companyNumber,
+  //     //   bank: newUserData.bank,
+  //     //   bankNumber: newUserData.bankNumber,
+  //     //   address: newUserData.address,
+
+  //     //   timestamp: serverTimestamp(),
+  //     // };
+  //     // await setDoc(newCityRef, list);
+
+  //     // 파이어베이스 추가 !!
+  //     await new Promise((resolve) => setTimeout(resolve, 500));
+  //     reset();
+  //     enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
+  //     push(PATH_DASHBOARD.user.list);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+  //  송장등록 완료
 
   const handleSaveAsDraft = async () => {
     setLoadingSave(true);
@@ -140,7 +252,7 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
           size="large"
           variant="contained"
           loading={loadingSend && isSubmitting}
-          onClick={handleSubmit(handleCreateAndSend)}
+          onClick={handleSubmit(onSubmit)}
         >
           {isEdit ? '출고수정' : '출고등록'} & 저장
         </LoadingButton>

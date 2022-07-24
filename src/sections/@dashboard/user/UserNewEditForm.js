@@ -32,6 +32,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 
@@ -61,16 +62,16 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
 
   const q = query(citiesRef, where('division', '==', 'client'));
 
-  useEffect(
-    () =>
-      onSnapshot(q, (snapshot) => {
-        snapshot.docs.forEach((doc, i) => {
-          setData(doc.data());
-        });
-        // setPosts(snapshot.docs);
-      }),
-    [DB]
-  );
+  // useEffect(
+  //   () =>
+  //     onSnapshot(q, (snapshot) => {
+  //       snapshot.docs.forEach((doc, i) => {
+  //         setData(doc.data());
+  //       });
+  //       // setPosts(snapshot.docs);
+  //     }),
+  //   [DB]
+  // );
 
   // console.log(data);
   // -------------------------- 파이어베이스
@@ -79,32 +80,33 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('이름은 필수 항목입니다.'),
-    email: Yup.string().required('Email is required').email(),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role Number is required'),
+    // email: Yup.string().required('Email is required').email(),
+    phone: Yup.string().required('휴대폰 번호는 필수 항목입니다.'),
+    companyNumber: Yup.string().required('사업자 &주민등록번호는 필수 항목입니다.'),
+    // bank: Yup.string().required('은행명은 필수 항목입니다.'),
+    // bankNumber: Yup.string().required('계좌번호는 필수 항목입니다.'),
+    // address: Yup.string().required('State is required'),
+    division: Yup.string().required('거래처 구분은 필수 항목입니다.'),
+    // bankUserName: Yup.string().required('Role Number is required'),
+
     // avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
   });
 
   const defaultValues = useMemo(
     () => ({
       name: currentUser?.name || '',
-      email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
+      phone: currentUser?.phone || '',
+      companyNumber: currentUser?.companyNumber || '',
+      bank: currentUser?.bank || '',
+      bankNumber: currentUser?.bankNumber || '',
       address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
+      division: currentUser?.division || '',
+      bankUserName: currentUser?.bankUserName || '',
       avatarUrl: currentUser?.avatarUrl || '',
-      isVerified: currentUser?.isVerified || true,
-      status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
+      // isVerified: currentUser?.isVerified || true,
+      // status: currentUser?.status,
+      // company: currentUser?.company || '',
+      // role: currentUser?.role || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentUser]
@@ -140,35 +142,115 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
     ...values,
   };
 
-  const onSubmit = async () => {
+  console.log(newUserData);
+
+  const onSubmit = async (data) => {
+    if (loading) return;
     setLoading(true);
-    console.log('클릭!!');
-    try {
-      // 파이어베이스 추가
+    // 여기 추가 !!
+    // 먼저 채팅방을 만들고 그다음 추가한다!! 아이디를 가져올수 있음!
+    // const citiesRef = collection(DB, 'calendar');
+    // const q = query(citiesRef, where('participants', 'array-contains', user ?.id || data.uid));
+    // const querySnapshot = await getDocs(q);
 
-      // const newCityRef = doc(collection(DB, 'client'));
-      // console.log(newUserData);
-      // const list = {
-      //   name: newUserData.name,
-      //   phone: newUserData.phone,
-      //   companyNumber: newUserData.companyNumber,
-      //   bank: newUserData.bank,
-      //   bankNumber: newUserData.bankNumber,
-      //   address: newUserData.address,
+    // querySnapshot.forEach((doc) => {
+    //   console.log(doc.id, ' => ', doc.data());
+    //   if (doc.data().name) {
+    //     chatRef.current = chatRef.current + 1;
+    //   }
+    // });
+    // console.log(chatRef);
 
-      //   timestamp: serverTimestamp(),
-      // };
-      // await setDoc(newCityRef, list);
+    // 채팅방이 없으면 생성해준다 .
+    // if (chatRef.current == 0) {
+    if (isEdit) {
+      const newCityRef = doc(DB, 'client', currentUser.id);
+      const userlist = {
+        name: newUserData.name,
+        phone: newUserData.phone,
+        companyNumber: newUserData.companyNumber,
+        bank: newUserData.bank,
+        bankNumber: newUserData.bankNumber,
+        address: newUserData.address,
+        division: newUserData.division,
+        bankUserName: newUserData.bankUserName,
+        avatarUrl:
+          'https://firebasestorage.googleapis.com/v0/b/snpcompany-a1d73.appspot.com/o/logo360x360.png?alt=media&token=6ce45667-d2ce-47e8-b864-2e7e6c0a447c',
+        id: newCityRef.id,
+        updateTime: new Date(),
+      };
+      await updateDoc(newCityRef, userlist);
+      enqueueSnackbar('이벤트 업데이트 성공!');
+    } else {
+      const newCityRef = doc(collection(DB, 'client'));
+      // console.log(newCityRef.id);
+      const userlist = {
+        name: newUserData.name,
+        phone: newUserData.phone,
+        companyNumber: newUserData.companyNumber,
+        bank: newUserData.bank,
+        bankNumber: newUserData.bankNumber,
+        address: newUserData.address,
+        division: newUserData.division,
+        bankUserName: newUserData.bankUserName,
+        avatarUrl:
+          'https://firebasestorage.googleapis.com/v0/b/snpcompany-a1d73.appspot.com/o/logo360x360.png?alt=media&token=6ce45667-d2ce-47e8-b864-2e7e6c0a447c',
+        id: newCityRef.id,
 
-      // 파이어베이스 추가 !!
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      push(PATH_DASHBOARD.user.list);
-    } catch (error) {
-      console.error(error);
+        creatTime: new Date(),
+        updateTime: new Date(),
+      };
+      await setDoc(newCityRef, userlist);
+      enqueueSnackbar('유저 추가 성공!!');
     }
+
+    // }
+    //여기 추가 !!
+
+    // // 파이어베스 포스트에 추가 한다 !
+    // await addDoc(collection(DB, 'chatroom'), {
+    //   who: [user?.id, data.uid],
+    //   name: '',
+    //   timestamp: serverTimestamp(),
+    // });
+
+    setLoading(false);
+    reset();
+    push(PATH_DASHBOARD.user.list);
+    // push(PATH_DASHBOARD.calendar);
+
+    // 바꿔야 될것 유저의 아이디를 가지고 있는 대화상대 로 바로 가기
   };
+
+  // const onSubmit = async () => {
+  //   setLoading(true);
+  //   console.log('클릭!!');
+  //   try {
+  //     // 파이어베이스 추가
+
+  //     // const newCityRef = doc(collection(DB, 'client'));
+  //     // console.log(newUserData);
+  //     // const list = {
+  //     //   name: newUserData.name,
+  //     //   phone: newUserData.phone,
+  //     //   companyNumber: newUserData.companyNumber,
+  //     //   bank: newUserData.bank,
+  //     //   bankNumber: newUserData.bankNumber,
+  //     //   address: newUserData.address,
+
+  //     //   timestamp: serverTimestamp(),
+  //     // };
+  //     // await setDoc(newCityRef, list);
+
+  //     // 파이어베이스 추가 !!
+  //     await new Promise((resolve) => setTimeout(resolve, 500));
+  //     reset();
+  //     enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
+  //     push(PATH_DASHBOARD.user.list);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -198,7 +280,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
   // ---------------------------- 등록
 
   return (
-    <FormProvider methods={methods}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ py: 10, px: 3 }}>
@@ -312,8 +394,8 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton variant="contained" loading={loading && isSubmitting} onClick={handleSubmit(onSubmit)}>
-                {!isEdit ? '생성' : 'Save Changes'}
+              <LoadingButton type="submit" variant="contained" loading={loading && isSubmitting}>
+                {!isEdit ? '생성' : '수정완료'}
               </LoadingButton>
             </Stack>
           </Card>
