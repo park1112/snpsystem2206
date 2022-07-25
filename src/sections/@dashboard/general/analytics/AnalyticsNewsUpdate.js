@@ -10,9 +10,36 @@ import Image from '../../../../components/Image';
 import Iconify from '../../../../components/Iconify';
 import Scrollbar from '../../../../components/Scrollbar';
 
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { async } from '@firebase/util';
+
 // ----------------------------------------------------------------------
 
 export default function AnalyticsNewsUpdate() {
+  const API_URL = 'https://news.google.com/news?hl=ko&gl=kr&ie=UTF-8&output=rss&q=양파';
+
+  const getData = async () => {
+    axios.get(API_URL).then((res) => {
+      console.log(res.toJSONObject());
+    });
+  };
+
+  useEffect(() => {
+    getData();
+  });
+
+  // const [data, setData] = useState(null);
+  // const onClick = async () => {
+  //   try {
+  //     const response = await axios.get('https://news.google.com/news?hl=ko&gl=kr&ie=UTF-8&output=rss&q=양파');
+  //     setData(response);
+  //     console.log(response.toJSONObject());
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+  // console.log(data);
   return (
     <Card>
       <CardHeader title="News Update" />

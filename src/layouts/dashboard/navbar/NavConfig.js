@@ -54,17 +54,17 @@ const navConfig = [
       },
 
       // 출고
-      // {
-      //   title: '출고',
-      //   path: PATH_DASHBOARD.release.root,
-      //   icon: ICONS.invoice,
-      //   children: [
-      //     { title: '출고 목록', path: PATH_DASHBOARD.release.list },
-      //     { title: '출고 송장', path: PATH_DASHBOARD.release.demoView },
-      //     { title: '출고 송장등록', path: PATH_DASHBOARD.release.new },
-      //     { title: 'edit', path: PATH_DASHBOARD.release.demoEdit },
-      //   ],
-      // },
+      {
+        title: '출고',
+        path: PATH_DASHBOARD.release.root,
+        icon: ICONS.invoice,
+        children: [
+          { title: '출고 송장등록', path: PATH_DASHBOARD.release.new },
+          { title: '출고 목록', path: PATH_DASHBOARD.release.list },
+          // { title: '출고 송장', path: PATH_DASHBOARD.release.demoView },
+          // { title: 'edit', path: PATH_DASHBOARD.release.demoEdit },
+        ],
+      },
 
       // INVOICE
       {

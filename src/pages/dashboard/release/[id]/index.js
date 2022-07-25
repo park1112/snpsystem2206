@@ -14,7 +14,7 @@ import Layout from '../../../../layouts';
 import Page from '../../../../components/Page';
 import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
 // sections
-import Invoice from '../../../../sections/@dashboard/invoice/details';
+import Invoice from '../../../../sections/@dashboard/release/details';
 import { initializeApp } from 'firebase/app';
 import { FIREBASE_API } from '../../../../config';
 import { collection, getFirestore, onSnapshot, query } from 'firebase/firestore';
@@ -22,13 +22,13 @@ import { useEffect, useRef, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
-InvoiceDetails.getLayout = function getLayout(page) {
+ReleaseDetails.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceDetails() {
+export default function ReleaseDetails() {
   // 송장 목록 불러오기
   // 거래처 목록 및 거래처 필드 목록 가져옴
   const firebaseApp = initializeApp(FIREBASE_API);
@@ -41,7 +41,7 @@ export default function InvoiceDetails() {
   // 거래처 목록 불러오기
   useEffect(
     () =>
-      onSnapshot(query(collection(DB, 'invoice')), (snapshot) => {
+      onSnapshot(query(collection(DB, 'release')), (snapshot) => {
         // messagesDBlist();
         // setPosts(snapshot.where('name', '==', '박 현재').get());
 
@@ -68,14 +68,14 @@ export default function InvoiceDetails() {
 
   // const { name } = query;
   const current = decodeURI(window.location.href);
-  const search = current.split('invoice/')[1];
+  const search = current.split('release/')[1];
 
-  console.log('파라미터 : ', search);
-  console.log(post);
+  // console.log('파라미터 : ', search);
+  // console.log(post);
 
   const invoice = post.find((user) => user.id + '/' === search);
 
-  console.log('파인더 : ', invoice);
+  // console.log('파인더 : ', invoice);
 
   // 송장 목록 불러오기
 
@@ -86,15 +86,15 @@ export default function InvoiceDetails() {
   // const invoice = _invoices.find((invoice) => invoice.id === id);
 
   return (
-    <Page title="입고">
+    <Page title="출고">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="입고 송장"
+          heading="출고 송장"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
-              name: '입고',
-              href: PATH_DASHBOARD.invoice.root,
+              name: '출고',
+              href: PATH_DASHBOARD.release.root,
             },
             { name: invoice?.invoiceNumber || '' },
           ]}

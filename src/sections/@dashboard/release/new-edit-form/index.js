@@ -116,6 +116,7 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  console.log('ddf?????', currentInvoice);
   // 송장등록!!
   const onSubmit = async (data) => {
     if (loadingSave) return;
@@ -137,7 +138,7 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
     // if (chatRef.current == 0) {
     // 있으면 수정하기 !! .
     if (currentInvoice) {
-      const newCityRef = doc(DB, 'invoice', currentInvoice.id);
+      const newCityRef = doc(DB, 'release', currentInvoice.id);
       const invoiceList = Object.assign(newInvoice, {
         updateTime: new Date(),
         totalCount: addreduce(additme),
@@ -148,7 +149,7 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
       enqueueSnackbar('송장 업데이트 성공!');
     } else {
       // 없으면 생성하기
-      const newCityRef = doc(collection(DB, 'invoice'));
+      const newCityRef = doc(collection(DB, 'release'));
       // console.log(newCityRef.id);
 
       const invoiceList = Object.assign(newInvoice, {
@@ -165,7 +166,7 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
 
     reset();
     setLoadingSave(true);
-    push(PATH_DASHBOARD.invoice.list);
+    push(PATH_DASHBOARD.release.list);
     // console.log(JSON.stringify(invoiceList, null, 2));
     // push(PATH_DASHBOARD.calendar);
 
@@ -256,7 +257,7 @@ export default function InvoiceNewEditForm({ isEdit, currentInvoice }) {
           loading={loadingSend && isSubmitting}
           onClick={handleSubmit(onSubmit)}
         >
-          {isEdit ? '입고 수정' : '입고 등록'}
+          {isEdit ? '출고 수정' : '출고 등록'}
         </LoadingButton>
       </Stack>
     </FormProvider>

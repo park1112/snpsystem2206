@@ -79,7 +79,7 @@ export const PATH_DASHBOARD = {
     list: path(ROOTS_DASHBOARD, '/release/list'),
     new: path(ROOTS_DASHBOARD, '/release/new'),
     view: (id) => path(ROOTS_DASHBOARD, `/release/${id}`),
-    edit: (id) => path(ROOTS_DASHBOARD, `/release/${id}/edit`),
+    edit: (id) => path(ROOTS_DASHBOARD, `/release/edit/${id}`),
     demoEdit: path(ROOTS_DASHBOARD, '/release/e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1/edit'),
     demoView: path(ROOTS_DASHBOARD, '/release/e99f09a7-dd88-49d5-b1c8-1daf80c2d7b5'),
   },

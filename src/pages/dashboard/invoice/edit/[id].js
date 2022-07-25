@@ -16,7 +16,7 @@ import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
 // sections
 import InvoiceNewEditForm from '../../../../sections/@dashboard/invoice/new-edit-form';
 import { initializeApp } from 'firebase/app';
-import { FIREBASE_API } from 'src/config';
+import { FIREBASE_API } from '../../../../config';
 import { collection, getFirestore, onSnapshot, query } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
 
