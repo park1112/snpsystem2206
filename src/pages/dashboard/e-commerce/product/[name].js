@@ -33,18 +33,18 @@ import CartWidget from '../../../../sections/@dashboard/e-commerce/CartWidget';
 
 const PRODUCT_DESCRIPTION = [
   {
-    title: '100% Original',
-    description: 'Chocolate bar candy canes ice cream toffee cookie halvah.',
+    title: '100% 국내산',
+    description: '저희 에스엔피는 100% 국내산만을 사용합니다.',
     icon: 'ic:round-verified',
   },
   {
-    title: '10 Day Replacement',
-    description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
+    title: '도착후 2일내 환불가능',
+    description: '제품 이상일시 도착 2일이네 교환&환불 가능합니다.',
     icon: 'eva:clock-fill',
   },
   {
-    title: 'Year Warranty',
-    description: 'Cotton candy gingerbread cake I love sugar sweet.',
+    title: '최상급 상품들',
+    description: '저희 에스엔피는 최상품의 상품들로만 선별하여 고객님들께 보내드립니다.',
     icon: 'ic:round-verified-user',
   },
 ];

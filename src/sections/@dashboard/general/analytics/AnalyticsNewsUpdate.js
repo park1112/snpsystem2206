@@ -9,44 +9,35 @@ import { _analyticPost } from '../../../../_mock';
 import Image from '../../../../components/Image';
 import Iconify from '../../../../components/Iconify';
 import Scrollbar from '../../../../components/Scrollbar';
-
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { async } from '@firebase/util';
 
 // ----------------------------------------------------------------------
 
 export default function AnalyticsNewsUpdate() {
-  const API_URL = 'https://news.google.com/news?hl=ko&gl=kr&ie=UTF-8&output=rss&q=양파';
+  const API_URL =
+    'https://newsapi.org/v2/everything?q=%EC%96%91%ED%8C%8C&from=2022-06-25&sortBy=publishedAt&apiKey=9c899f3de43047b3871b22aef10a393a';
+
+  // const API_news = useRef([]);
+  const [API_news, setAPI_news] = useState();
 
   const getData = async () => {
     axios.get(API_URL).then((res) => {
-      console.log(res.toJSONObject());
+      setAPI_news(res.data.articles);
     });
   };
 
   useEffect(() => {
     getData();
-  });
+  }, []);
 
-  // const [data, setData] = useState(null);
-  // const onClick = async () => {
-  //   try {
-  //     const response = await axios.get('https://news.google.com/news?hl=ko&gl=kr&ie=UTF-8&output=rss&q=양파');
-  //     setData(response);
-  //     console.log(response.toJSONObject());
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-  // console.log(data);
   return (
     <Card>
-      <CardHeader title="News Update" />
+      <CardHeader title="양파 최신 뉴스" />
 
       <Scrollbar>
         <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
-          {_analyticPost.map((news) => (
+          {API_news?.map((news) => (
             <NewsItem key={news.id} news={news} />
           ))}
         </Stack>
@@ -56,7 +47,7 @@ export default function AnalyticsNewsUpdate() {
 
       <Box sx={{ p: 2, textAlign: 'right' }}>
         <Button size="small" color="inherit" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
-          View all
+          모두 보기
         </Button>
       </Box>
     </Card>
@@ -69,19 +60,21 @@ NewsItem.propTypes = {
   news: PropTypes.shape({
     description: PropTypes.string,
     image: PropTypes.string,
-    postedAt: PropTypes.instanceOf(Date),
+    publishedAt: PropTypes.instanceOf(Date),
     title: PropTypes.string,
+    urlToImage: PropTypes.string,
+    url: PropTypes.string,
   }),
 };
 
 function NewsItem({ news }) {
-  const { image, title, description, postedAt } = news;
+  const { urlToImage, title, description, publishedAt, url } = news;
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
-      <Image alt={title} src={image} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
+      <Image alt={title} src={urlToImage} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
       <Box sx={{ minWidth: 240 }}>
-        <Link color="inherit">
+        <Link color="inherit" href={url}>
           <Typography variant="subtitle2" noWrap>
             {title}
           </Typography>
@@ -91,7 +84,7 @@ function NewsItem({ news }) {
         </Typography>
       </Box>
       <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
-        {fToNow(postedAt)}
+        {fToNow(publishedAt)}
       </Typography>
     </Stack>
   );

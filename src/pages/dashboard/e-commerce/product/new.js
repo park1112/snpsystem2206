@@ -27,7 +27,7 @@ export default function EcommerceProductCreate() {
     <Page title="Ecommerce: Create a new product">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Create a new product"
+          heading="상품 추가 !!"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {

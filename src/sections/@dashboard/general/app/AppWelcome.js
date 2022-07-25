@@ -36,15 +36,15 @@ export default function AppWelcome({ displayName }) {
         }}
       >
         <Typography gutterBottom variant="h4">
-          Welcome back,
-          <br /> {!displayName ? '...' : displayName}!
+          환영합니다.
+          <br /> {!displayName ? '...' : displayName}님
         </Typography>
 
         <Typography variant="body2" sx={{ pb: { xs: 3, xl: 5 }, maxWidth: 480, mx: 'auto' }}>
-          {`If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything`}
+          {`저희 에스엔피 쇼핑몰은 최고의 제품을 유통마진 없이 국내 최저가로 판매하고 있습니다. `}
         </Typography>
 
-        <Button variant="contained">Go Now</Button>
+        <Button variant="contained">회사 소개</Button>
       </CardContent>
 
       <SeoIllustration

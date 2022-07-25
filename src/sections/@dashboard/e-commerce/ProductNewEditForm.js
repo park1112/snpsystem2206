@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // next
 import { useRouter } from 'next/router';
 // form
@@ -23,6 +23,10 @@ import {
   RHFRadioGroup,
   RHFUploadMultiFile,
 } from '../../../components/hook-form';
+import { initializeApp } from 'firebase/app';
+import { FIREBASE_API } from '../../../config';
+import { collection, doc, getFirestore, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadString, getStorage, uploadBytes } from '@firebase/storage';
 
 // ----------------------------------------------------------------------
 
@@ -68,10 +72,27 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const [loading, setLoading] = useState(false);
+
+  const firebaseApp = initializeApp(FIREBASE_API);
+
+  const DB = getFirestore(firebaseApp);
+  const storage = getStorage(firebaseApp);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [data, setData] = useState([]);
+
+  const imageRef = useRef([]);
+  const downloadURL = useRef([]);
+
+  const citiesRef = collection(DB, 'category');
+
+  const q = query(citiesRef, where('division', '==', 'client'));
+
   const NewProductSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     description: Yup.string().required('Description is required'),
-    images: Yup.array().min(1, 'Images is required'),
+    // images: Yup.array().min(1, 'Images is required'),
     price: Yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
@@ -121,15 +142,48 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentProduct]);
 
-  const onSubmit = async () => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      push(PATH_DASHBOARD.eCommerce.list);
-    } catch (error) {
-      console.error(error);
+  // 파이어베이스 설정
+
+  // console.log(values);
+  // console.log(values.images);
+
+  const onSubmit = async (data) => {
+    if (loading) return;
+    setLoading(true);
+
+    if (isEdit) {
+      const newCityRef = doc(DB, 'products', currentProduct.id);
+    } else {
+      const newCityRef = doc(collection(DB, 'products'));
+      if (values.images.length > 0) {
+        values.images.map((img, i) => {
+          imageRef.current[i] = ref(storage, `products/${newCityRef.id}/image${i}`);
+          uploadBytes(imageRef.current[i], img).then(async (snapshot) => {
+            await getDownloadURL(ref(storage, snapshot.metadata.fullPath)).then((url) => {
+              downloadURL.current.push(url);
+              console.log('url', url);
+            });
+          });
+        });
+        console.log('qqqqqq', values);
+        console.log('다운로드', downloadURL.current);
+        const productsList = Object.assign(values, {
+          id: newCityRef.id,
+          images: downloadURL.current,
+          createdAt: new Date(),
+          updateAt: new Date(),
+        });
+        console.log('ppppp', productsList);
+        await setDoc(newCityRef, productsList);
+      } else {
+        console.log(values.images, '없음');
+      }
     }
+
+    setLoading(false);
+    reset();
+    enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
+    push(PATH_DASHBOARD.eCommerce.list);
   };
 
   const handleDrop = useCallback(
@@ -161,10 +215,10 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
         <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Stack spacing={3}>
-              <RHFTextField name="name" label="Product Name" />
+              <RHFTextField name="name" label="상품명" />
 
               <div>
-                <LabelStyle>Description</LabelStyle>
+                <LabelStyle>상품설명</LabelStyle>
                 <RHFEditor simple name="description" />
               </div>
 

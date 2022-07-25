@@ -3,7 +3,7 @@ import orderBy from 'lodash/orderBy';
 // form
 import { useForm } from 'react-hook-form';
 // @mui
-import { Container, Typography, Stack } from '@mui/material';
+import { Container, Typography, Stack, Grid } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
 import { getProducts, filterProducts } from '../../../redux/slices/product';
@@ -26,8 +26,11 @@ import {
   ShopProductSearch,
 } from '../../../sections/@dashboard/e-commerce/shop';
 import CartWidget from '../../../sections/@dashboard/e-commerce/CartWidget';
+import { AppWelcome, AppFeatured } from '../../../sections/@dashboard/general/app';
 
 // ----------------------------------------------------------------------
+
+import useAuth from '../../../hooks/useAuth';
 
 EcommerceShop.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
@@ -36,6 +39,8 @@ EcommerceShop.getLayout = function getLayout(page) {
 // ----------------------------------------------------------------------
 
 export default function EcommerceShop() {
+  const { user } = useAuth();
+
   const { themeStretch } = useSettings();
 
   const dispatch = useDispatch();
@@ -57,6 +62,8 @@ export default function EcommerceShop() {
   const methods = useForm({
     defaultValues,
   });
+
+  console.log(products);
 
   const { reset, watch, setValue } = methods;
 
@@ -150,6 +157,18 @@ export default function EcommerceShop() {
           </Stack>
         </Stack>
 
+        {/* 뉴스 및 환영인사  */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8}>
+            <AppWelcome displayName={user?.displayName} />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <AppFeatured />
+          </Grid>
+        </Grid>
+
+        {/* 여기서부터 상품리스트 */}
         <Stack sx={{ mb: 3 }}>
           {!isDefault && (
             <>

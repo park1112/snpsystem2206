@@ -82,16 +82,16 @@ export default function CheckoutCart() {
             </Scrollbar>
           ) : (
             <EmptyContent
-              title="Cart is empty"
-              description="Look like you have no items in your shopping cart."
-              img="https://minimal-assets-api.vercel.app/assets/illustrations/illustration_empty_cart.svg"
+              title="카트가 비어 있습니다 ."
+              description="좋은 상품들로 상품을 추가해 주세요."
+              img="/illustration_empty_cart.svg"
             />
           )}
         </Card>
 
         <NextLink href={PATH_DASHBOARD.eCommerce.root} passHref>
           <Button color="inherit" startIcon={<Iconify icon={'eva:arrow-ios-back-fill'} />}>
-            Continue Shopping
+            쇼핑하러 가기
           </Button>
         </NextLink>
       </Grid>
@@ -112,7 +112,7 @@ export default function CheckoutCart() {
           disabled={cart.length === 0}
           onClick={handleNextStep}
         >
-          Check Out
+          결제하기
         </Button>
       </Grid>
     </Grid>

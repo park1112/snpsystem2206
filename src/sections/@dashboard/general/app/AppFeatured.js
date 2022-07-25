@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import Slider from 'react-slick';
 import { m } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 // @mui
 import { alpha, useTheme, styled } from '@mui/material/styles';
 import { CardContent, Box, Card, Typography, Link } from '@mui/material';
@@ -11,6 +11,7 @@ import { _appFeatured } from '../../../../_mock';
 import Image from '../../../../components/Image';
 import { MotionContainer, varFade } from '../../../../components/animate';
 import { CarouselDots, CarouselArrows } from '../../../../components/carousel';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +28,22 @@ const OverlayStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function AppFeatured() {
+  const API_URL =
+    'https://newsapi.org/v2/everything?q=%EC%96%91%ED%8C%8C&from=2022-06-25&sortBy=publishedAt&apiKey=9c899f3de43047b3871b22aef10a393a';
+
+  // const API_news = useRef([]);
+  const [API_news, setAPI_news] = useState();
+
+  const getData = async () => {
+    axios.get(API_URL).then((res) => {
+      setAPI_news(res.data.articles);
+    });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   const theme = useTheme();
   const carouselRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(theme.direction === 'rtl' ? _appFeatured.length - 1 : 0);
@@ -59,7 +76,7 @@ export default function AppFeatured() {
   return (
     <Card>
       <Slider ref={carouselRef} {...settings}>
-        {_appFeatured.map((app, index) => (
+        {API_news?.map((app, index) => (
           <CarouselItem key={app.id} item={app} isActive={index === currentIndex} />
         ))}
       </Slider>
@@ -92,13 +109,14 @@ CarouselItem.propTypes = {
   isActive: PropTypes.bool,
   item: PropTypes.shape({
     description: PropTypes.string,
-    image: PropTypes.string,
+    urlToImage: PropTypes.string,
     title: PropTypes.string,
+    url: PropTypes.string,
   }),
 };
 
 function CarouselItem({ item, isActive }) {
-  const { image, title, description } = item;
+  const { title, description, urlToImage, url } = item;
 
   return (
     <Box sx={{ position: 'relative' }}>
@@ -117,11 +135,11 @@ function CarouselItem({ item, isActive }) {
       >
         <m.div variants={varFade().inRight}>
           <Typography variant="overline" component="div" sx={{ mb: 1, opacity: 0.48 }}>
-            Featured App
+            양파 최신 뉴스
           </Typography>
         </m.div>
         <m.div variants={varFade().inRight}>
-          <Link color="inherit" underline="none">
+          <Link href={url} color="inherit" underline="none">
             <Typography variant="h5" gutterBottom noWrap>
               {title}
             </Typography>
@@ -134,7 +152,7 @@ function CarouselItem({ item, isActive }) {
         </m.div>
       </CardContent>
       <OverlayStyle />
-      <Image alt={title} src={image} sx={{ height: { xs: 280, xl: 320 } }} />
+      <Image alt={title} src={urlToImage} sx={{ height: { xs: 280, xl: 320 } }} />
     </Box>
   );
 }
